@@ -1,9 +1,9 @@
 /*==================================================
-NewStudentView.js
+AddStudentToCampusView.js
 
-The Views component is responsible for rendering web page with data provided by the corresponding Container component.
-It constructs a React component to display the new student page.
-================================================== */
+The Views component is responsible for rendering a web page with data provided by the corresponding Container component.
+It constructs a React component to display the form to create a new student or add an existing student.
+==================================================*/
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,14 +16,19 @@ const useStyles = makeStyles(() => ({
     borderRadius: "5px",
     margin: "auto",
   },
-  title: {
-    flexGrow: 1,
-    textAlign: "left",
-    textDecoration: "none",
+  studentListContainer: {
+    width: "500px",
+    margin: "20px auto",
+    padding: "10px",
+    borderRadius: "5px",
+    backgroundColor: "#f9f9f9",
+    border: "1px solid #ddd",
   },
-  customizeAppBar: {
-    backgroundColor: "#11153e",
-    shadows: ["none"],
+  studentItem: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "10px",
   },
   formTitle: {
     backgroundColor: "#c5c8d6",
@@ -40,15 +45,22 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const NewStudentView = (props) => {
-  const { handleChange, handleSubmit, errors } = props;
+const AddStudentToCampusView = (props) => {
+  const {
+    handleChange,
+    handleSubmitNewStudent,
+    handleAddExistingStudent,
+    existingStudents = [],
+    errors,
+  } = props;
+
   const classes = useStyles();
 
-  // Render a New Student view with an input form
   return (
     <div>
-      <h1>New Student</h1>
+      <h1>Add Student to Campus</h1>
 
+      {/* New Student Form */}
       <div className={classes.root}>
         <div className={classes.formContainer}>
           <div className={classes.formTitle}>
@@ -60,15 +72,15 @@ const NewStudentView = (props) => {
                 color: "#11153e",
               }}
             >
-              Add a Student
+              Create a New Student
             </Typography>
           </div>
           <form
             style={{ textAlign: "center" }}
-            onSubmit={(e) => handleSubmit(e)}
+            onSubmit={(e) => handleSubmitNewStudent(e)}
           >
             <label style={{ color: "#11153e", fontWeight: "bold" }}>
-              First Name:{" "}
+              First Name:
             </label>
             <input
               type="text"
@@ -84,7 +96,7 @@ const NewStudentView = (props) => {
             <br />
 
             <label style={{ color: "#11153e", fontWeight: "bold" }}>
-              Last Name:{" "}
+              Last Name:
             </label>
             <input
               type="text"
@@ -100,7 +112,7 @@ const NewStudentView = (props) => {
             <br />
 
             <label style={{ color: "#11153e", fontWeight: "bold" }}>
-              Email:{" "}
+              Email:
             </label>
             <input type="text" name="email" onChange={(e) => handleChange(e)} />
             {errors.find((error) => error.field === "email") && (
@@ -112,7 +124,7 @@ const NewStudentView = (props) => {
             <br />
 
             <label style={{ color: "#11153e", fontWeight: "bold" }}>
-              Image URL:{" "}
+              Image URL:
             </label>
             <input
               type="text"
@@ -132,27 +144,50 @@ const NewStudentView = (props) => {
             <br />
             <br />
 
-            <label style={{ color: "#11153e", fontWeight: "bold" }}>
-              Campus ID:
-            </label>
-            <input
-              type="text"
-              name="campusId"
-              onChange={(e) => handleChange(e)}
-            />
-            <br />
-            <br />
-
             <Button variant="contained" color="primary" type="submit">
-              Submit
+              Create New Student
             </Button>
-            <br />
-            <br />
           </form>
         </div>
+      </div>
+
+      {/* Existing Students List */}
+      <div className={classes.studentListContainer}>
+        <div className={classes.formTitle}>
+          <Typography
+            style={{
+              fontWeight: "bold",
+              fontFamily: "Courier, sans-serif",
+              fontSize: "20px",
+              color: "#11153e",
+            }}
+          >
+            Add an Existing Student
+          </Typography>
+        </div>
+        {existingStudents.length > 0 ? (
+          existingStudents.map((student) => (
+            <div key={student.id} className={classes.studentItem}>
+              <span>
+                {student.firstname} {student.lastname}
+              </span>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => handleAddExistingStudent(student.id)}
+              >
+                Add to Campus
+              </Button>
+            </div>
+          ))
+        ) : (
+          <p style={{ textAlign: "center", color: "#11153e" }}>
+            No students available to add.
+          </p>
+        )}
       </div>
     </div>
   );
 };
 
-export default NewStudentView;
+export default AddStudentToCampusView;
