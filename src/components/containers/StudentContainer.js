@@ -17,23 +17,34 @@ class StudentContainer extends Component {
     super(props);
     this.state = {
       redirect: false, // Used to handle redirection after deletion
+      editRedirect: false, // Used to handle redirection to the Edit Student page
     };
   }
 
-  // Get student data from back-end database
+  // Fetch student data from the back-end when the component mounts
   componentDidMount() {
     const { id } = this.props.match.params;
     this.props.fetchStudent(id);
   }
 
+  // Handle deleting a student
   handleDeleteStudent = (id) => {
     this.props.deleteStudent(id); // Delete the student
     this.setState({ redirect: true }); // Trigger redirect after deletion
   };
 
+  // Redirect to Edit Student View
+  handleEditStudent = () => {
+    this.setState({ editRedirect: true });
+  };
+
   render() {
     if (this.state.redirect) {
       return <Redirect to="/students" />; // Redirect to All Students view
+    }
+
+    if (this.state.editRedirect) {
+      return <Redirect to={`/student/${this.props.student.id}/edit`} />; // Redirect to Edit Student view
     }
 
     return (
@@ -42,6 +53,7 @@ class StudentContainer extends Component {
         <StudentView
           student={this.props.student}
           deleteStudent={this.handleDeleteStudent}
+          handleEditStudent={this.handleEditStudent}
         />
       </div>
     );

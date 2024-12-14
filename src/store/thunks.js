@@ -147,7 +147,12 @@ export const editStudentThunk = (student) => async (dispatch) => {
     // Update successful so change state with dispatch
     dispatch(ac.editStudent(updatedStudent));
   } catch (err) {
-    console.error(err);
+    if (err.response?.status === 400 && err.response?.data?.errors) {
+      // Return validation errors as an array
+      throw err.response.data.errors;
+    }
+    console.error("Unexpected Error:", err);
+    throw new Error("Failed to edit student.");
   }
 };
 
@@ -161,6 +166,7 @@ export const fetchStudentThunk = (id) => async (dispatch) => {
     // Call Action Creator to return Action object (type + payload with student data)
     // Then dispatch the Action object to Reducer to display student data
     dispatch(ac.fetchStudent(res.data));
+    return res.data;
   } catch (err) {
     console.error(err);
   }
