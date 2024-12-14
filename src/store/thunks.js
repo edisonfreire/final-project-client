@@ -29,6 +29,7 @@ export const fetchCampusThunk = (id) => async (dispatch) => {
     // API "get" call to get a student data (based on "id")from database
     let res = await axios.get(`/api/campuses/${id}`);
     dispatch(ac.fetchCampus(res.data));
+    return res.data;
   } catch (err) {
     console.error(err);
   }
@@ -69,6 +70,18 @@ export const deleteCampusThunk = (campusId) => async (dispatch) => {
   }
 };
 
+export const editCampusThunk = (campus) => async (dispatch) => {
+  try {
+    const response = await axios.put(`/api/campuses/${campus.id}`, campus);
+    dispatch({
+      type: "EDIT_CAMPUS",
+      payload: response.data,
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 // All Students
 // THUNK CREATOR:
 export const fetchAllStudentsThunk = () => async (dispatch) => {
@@ -96,19 +109,26 @@ export const addStudentThunk = (student) => async (dispatch) => {
     dispatch(ac.addStudent(res.data));
     return res.data;
   } catch (err) {
-    console.error(err);
+    if (err.response?.status === 400 && err.response?.data?.errors) {
+      // Return validation errors as an array
+      throw err.response.data.errors;
+    }
+    console.error("Unexpected Error:", err);
+    throw new Error("Failed to add student.");
   }
 };
 
 // Delete Student
 // THUNK CREATOR:
 export const deleteStudentThunk = (studentId) => async (dispatch) => {
-  // The THUNK
   try {
-    // API "delete" call to delete student (based on "studentID") from database
+    // API "delete" call to delete student by ID
     await axios.delete(`/api/students/${studentId}`);
-    // Delete successful so change state with dispatch
-    dispatch(ac.deleteStudent(studentId));
+    // Dispatch DELETE_STUDENT action
+    dispatch({
+      type: "DELETE_STUDENT",
+      payload: studentId,
+    });
   } catch (err) {
     console.error(err);
   }

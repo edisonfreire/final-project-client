@@ -1,8 +1,8 @@
 /*==================================================
-NewCampusView.js
+EditCampusView.js
 
-The Views component is responsible for rendering web page with data provided by the corresponding Container component.
-It constructs a React component to display the new campus page.
+The Views component is responsible for rendering the edit campus page.
+It constructs a React component to display the campus editing form.
 ================================================== */
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -32,22 +32,16 @@ const useStyles = makeStyles(() => ({
     borderRadius: "5px 5px 0px 0px",
     padding: "3px",
   },
-  errorText: {
-    color: "red",
-    fontSize: "12px",
-    textAlign: "center",
-    margin: "5px 0",
-  },
 }));
 
-const NewCampusView = (props) => {
-  const { handleChange, handleSubmit, errors } = props;
+const EditCampusView = (props) => {
+  const { handleChange, handleSubmit, campus } = props;
   const classes = useStyles();
 
-  // Render a New Campus view with an input form
+  // Render an Edit Campus view with a form
   return (
     <div>
-      <h1>New Campus</h1>
+      <h1>Edit Campus</h1>
 
       <div className={classes.root}>
         <div className={classes.formContainer}>
@@ -60,7 +54,7 @@ const NewCampusView = (props) => {
                 color: "#11153e",
               }}
             >
-              Add a Campus
+              Update Campus Information
             </Typography>
           </div>
           <form
@@ -68,14 +62,14 @@ const NewCampusView = (props) => {
             onSubmit={(e) => handleSubmit(e)}
           >
             <label style={{ color: "#11153e", fontWeight: "bold" }}>
-              Campus Name:{" "}
+              Name:{" "}
             </label>
-            <input type="text" name="name" onChange={(e) => handleChange(e)} />
-            {errors.find((error) => error.field === "name") && (
-              <p className={classes.errorText}>
-                {errors.find((error) => error.field === "name").message}
-              </p>
-            )}
+            <input
+              type="text"
+              name="name"
+              value={campus.name || ""}
+              onChange={(e) => handleChange(e)}
+            />
             <br />
             <br />
 
@@ -85,13 +79,9 @@ const NewCampusView = (props) => {
             <input
               type="text"
               name="address"
+              value={campus.address || ""}
               onChange={(e) => handleChange(e)}
             />
-            {errors.find((error) => error.field === "address") && (
-              <p className={classes.errorText}>
-                {errors.find((error) => error.field === "address").message}
-              </p>
-            )}
             <br />
             <br />
 
@@ -100,9 +90,10 @@ const NewCampusView = (props) => {
             </label>
             <textarea
               name="description"
-              rows="4"
-              style={{ width: "90%" }}
+              value={campus.description || ""}
               onChange={(e) => handleChange(e)}
+              rows="4"
+              cols="40"
             />
             <br />
             <br />
@@ -113,6 +104,7 @@ const NewCampusView = (props) => {
             <input
               type="text"
               name="imageUrl"
+              value={campus.imageUrl || ""}
               onChange={(e) => handleChange(e)}
             />
             <br />
@@ -130,4 +122,4 @@ const NewCampusView = (props) => {
   );
 };
 
-export default NewCampusView;
+export default EditCampusView;
